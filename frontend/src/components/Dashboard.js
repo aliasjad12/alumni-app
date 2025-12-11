@@ -8,7 +8,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://3.110.118.11:5000/api/dashboard", {
+      const res = await axios.get("http://13.204.42.30:5000/api/dashboard", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUsers(res.data.users);
