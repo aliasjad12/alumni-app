@@ -1,30 +1,54 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Dashboard() {
   const [users, setUsers] = useState([]);
   const [services, setServices] = useState([]);
+  const navigate = useNavigate();
 
+  // Fetch users and services
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://13.232.132.160:5000/api/dashboard", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      try {
+        const res = await axios.get("http://13.232.132.160:5000/api/dashboard", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-      setUsers(res.data.users);
-      setServices(res.data.services);
+        setUsers(res.data.users);
+        setServices(res.data.services);
+      } catch (err) {
+        console.error("Error fetching dashboard data:", err);
+      }
     };
 
     fetchData();
   }, []);
 
+  // Logout function
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
   return (
     <div className="p-10 bg-gray-100 min-h-screen">
-      <h1 className="text-4xl font-extrabold mb-8 text-gray-800">Dashboard</h1>
+      {/* Header with Logout */}
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-extrabold text-gray-800">Dashboard</h1>
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+        >
+          Logout
+        </button>
+      </div>
 
+      {/* Grid Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
+        {/* Users Panel */}
         <div className="bg-white p-6 rounded-xl shadow-xl">
           <h2 className="font-bold text-xl mb-4 text-blue-700">Registered Users</h2>
           <ul className="space-y-2">
@@ -36,6 +60,7 @@ function Dashboard() {
           </ul>
         </div>
 
+        {/* Services Panel */}
         <div className="bg-white p-6 rounded-xl shadow-xl">
           <h2 className="font-bold text-xl mb-4 text-green-700">Services Used</h2>
           <ul className="space-y-2">
@@ -45,21 +70,21 @@ function Dashboard() {
           </ul>
         </div>
 
+        {/* Monitoring Panels */}
         <div className="bg-white p-6 rounded-xl shadow-xl col-span-full">
           <h2 className="font-bold text-xl mb-4 text-purple-700">Monitoring</h2>
-
           <div className="flex flex-col md:flex-row gap-6">
 
-            {/* Grafana */}
+            {/* Grafana - Replace with your embedded dashboard UID */}
             <iframe
-              src="http://13.232.132.160:3001"
+              src="http://13.232.132.160:3001/d/<dashboard-uid>?orgId=1&kiosk=tv"
               className="w-full md:w-1/2 h-96 rounded-xl shadow-lg border"
               title="Grafana"
             />
 
-            {/* Prometheus */}
+            {/* Prometheus - optional raw metrics */}
             <iframe
-              src="http://13.232.132.160:9090"
+              src="http://13.232.132.160:9090/graph"
               className="w-full md:w-1/2 h-96 rounded-xl shadow-lg border"
               title="Prometheus"
             />
