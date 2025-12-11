@@ -18,35 +18,50 @@ function Signup() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <form onSubmit={submit} className="bg-white p-10 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">Signup</h2>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-200 to-blue-200">
+      <form onSubmit={submit} className="bg-white/80 backdrop-blur-xl p-10 rounded-2xl shadow-2xl w-96">
+        <h2 className="text-3xl font-extrabold mb-6 text-center text-green-700">Signup</h2>
+
+        {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
+
         <input
-          className="w-full p-3 border mb-4 rounded"
+          className="w-full p-3 border mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
           name="name"
           placeholder="Name"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
+
         <input
-          className="w-full p-3 border mb-4 rounded"
+          className="w-full p-3 border mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
           name="email"
           placeholder="Email"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
+
         <input
-          className="w-full p-3 border mb-4 rounded"
+          className="w-full p-3 border mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
           type="password"
           name="password"
           placeholder="Password"
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
-        <button className="w-full bg-green-600 text-white py-3 rounded hover:bg-green-700 transition">
+
+        <button className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition font-semibold">
           Signup
         </button>
+
+        <p className="mt-4 text-center">
+          Already have an account?{" "}
+          <span
+            className="text-green-700 font-semibold cursor-pointer"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </span>
+        </p>
       </form>
     </div>
   );
