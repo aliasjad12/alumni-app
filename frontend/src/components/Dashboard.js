@@ -77,7 +77,7 @@ function Dashboard() {
 
             {/* Grafana - Replace with your embedded dashboard UID */}
             <iframe
-              src="http://13.203.232.161:3001/d/<dashboard-uid>?orgId=1&kiosk=tv"
+              src="http://13.203.232.161:3001/d/rYdddlPWk?orgId=1&kiosk=tv"
               className="w-full md:w-1/2 h-96 rounded-xl shadow-lg border"
               title="Grafana"
             />
