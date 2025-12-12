@@ -5,6 +5,10 @@ const User = require('../models/User');
 const router = express.Router();
 require('dotenv').config();
 
+// --------------------------------------
+//  AUTH ROUTES WITH PROMETHEUS METRICS
+// --------------------------------------
+
 router.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
   try {
@@ -17,6 +21,7 @@ router.post('/signup', async (req, res) => {
     user = new User({ name, email, password: hash });
     await user.save();
 
+    // Signup does not increment active users
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.json({ token, user: { id: user._id, name, email } });
   } catch (err) {
@@ -26,6 +31,7 @@ router.post('/signup', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ msg: "Invalid credentials" });
@@ -34,7 +40,27 @@ router.post('/login', async (req, res) => {
     if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // Increase Prometheus active users metric
+    if (req.app.locals.activeUsersGauge) {
+      req.app.locals.activeUsersGauge.inc();
+    }
+
     res.json({ token, user: { id: user._id, name: user.name, email } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
+// LOGOUT ROUTE (Frontend must call this)
+router.post('/logout', (req, res) => {
+  try {
+    if (req.app.locals.activeUsersGauge) {
+      req.app.locals.activeUsersGauge.dec();
+    }
+
+    return res.json({ msg: "Logged out successfully" });
   } catch (err) {
     res.status(500).send("Server error");
   }
