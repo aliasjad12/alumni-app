@@ -11,9 +11,5 @@ RUN npm install -g serve
 
 EXPOSE 3000
 
-# Set HOST and PORT environment variables
-ENV PORT=3000
-ENV HOST=0.0.0.0
-
-# Start serve
-CMD ["serve", "-s", "build"]
+# Start serve on all interfaces
+CMD ["serve", "-s", "build", "-l", "0.0.0.0:3000"]
