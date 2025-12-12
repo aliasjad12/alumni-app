@@ -11,5 +11,5 @@ RUN npm install -g serve
 
 EXPOSE 3000
 
-# Start serve on all interfaces
-CMD ["serve", "-s", "build", "-l", "0.0.0.0:3000"]
+# Correct serve command for Node 20
+CMD ["serve", "-s", "build", "-l", "3000"]
