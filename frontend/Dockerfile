@@ -5,8 +5,15 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
+
+# Install serve globally
 RUN npm install -g serve
+
 EXPOSE 3000
 
-# Bind to all interfaces so EC2 public IP works
-CMD ["serve", "-s", "build", "-l", "3000", "-H", "0.0.0.0"]
+# Set HOST and PORT environment variables
+ENV PORT=3000
+ENV HOST=0.0.0.0
+
+# Start serve
+CMD ["serve", "-s", "build"]
