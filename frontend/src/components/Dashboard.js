@@ -12,7 +12,7 @@ function Dashboard() {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       try {
-        const res = await axios.get("http://13.203.195.118:5000/api/dashboard", {
+        const res = await axios.get("http://13.203.232.161:5000/api/dashboard", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -77,14 +77,14 @@ function Dashboard() {
 
             {/* Grafana - Replace with your embedded dashboard UID */}
             <iframe
-              src="http://13.232.132.160:3001/d/<dashboard-uid>?orgId=1&kiosk=tv"
+              src="http://13.203.232.161:3001/d/<dashboard-uid>?orgId=1&kiosk=tv"
               className="w-full md:w-1/2 h-96 rounded-xl shadow-lg border"
               title="Grafana"
             />
 
             {/* Prometheus - optional raw metrics */}
             <iframe
-              src="http://13.203.195.118:9090/graph"
+              src="http://13.203.232.161:9090/graph"
               className="w-full md:w-1/2 h-96 rounded-xl shadow-lg border"
               title="Prometheus"
             />
