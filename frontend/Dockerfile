@@ -5,7 +5,7 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
-
+RUN npm install -g serve
 EXPOSE 3000
 
 # Bind to all interfaces so EC2 public IP works
