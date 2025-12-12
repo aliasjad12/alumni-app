@@ -38,5 +38,12 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_SERVER_ROOT_URL=http://13.203.232.161:3001
       - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
     depends_on:
       - prometheus
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  grafana-data:
