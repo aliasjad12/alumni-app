@@ -12,7 +12,7 @@ function Dashboard() {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       try {
-        const res = await axios.get("http://13.203.232.161:5000/api/dashboard", {
+        const res = await axios.get("http://3.110.154.156:5000/api/dashboard", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -76,15 +76,17 @@ function Dashboard() {
           <div className="flex flex-col md:flex-row gap-6">
 
             {/* Grafana - Replace with your embedded dashboard UID */}
+            const GRAFANA_URL = process.env.REACT_APP_GRAFANA_URL;
+
             <iframe
-              src="http://13.203.232.161:3001/d/rYdddlPWk?orgId=1&kiosk=tv"
-              className="w-full md:w-1/2 h-96 rounded-xl shadow-lg border"
-              title="Grafana"
-            />
+  src={`${GRAFANA_URL}/d/alumni-monitoring?orgId=1&kiosk`}
+  className="w-full md:w-1/2 h-96 rounded-xl shadow-lg border"
+  title="Grafana"
+      />
 
             {/* Prometheus - optional raw metrics */}
             <iframe
-              src="http://13.203.232.161:9090/graph"
+              src="http://3.110.154.156:9090/graph"
               className="w-full md:w-1/2 h-96 rounded-xl shadow-lg border"
               title="Prometheus"
             />

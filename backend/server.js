@@ -1,67 +1,81 @@
-const express = require('express');
-const connectDB = require('./config/db');
-const cors = require('cors');
-require('dotenv').config();
-
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
+const connectDB = require("./config/db");
 const client = require("prom-client");
-const app = express();
+const User = require("./models/User");
 
-// Connect to MongoDB
+const app = express();
 connectDB();
 
-// ----- PROMETHEUS METRICS SETUP -----
+app.use(cors());
+app.use(express.json());
 
-// Enable default metrics (CPU, memory, event loop, etc)
-const collectDefaultMetrics = client.collectDefaultMetrics;
-collectDefaultMetrics();
+// ---------- PROMETHEUS ----------
+client.collectDefaultMetrics();
 
-// Custom Prometheus metrics
+// Total requests
 const httpRequestCount = new client.Counter({
   name: "http_requests_total",
-  help: "Total number of HTTP requests",
+  help: "Total HTTP requests",
   labelNames: ["method", "route", "status"]
 });
 
-const activeUsersGauge = new client.Gauge({
-  name: "active_users",
-  help: "Number of currently active users"
+// Request duration
+const httpRequestDuration = new client.Histogram({
+  name: "http_request_duration_seconds",
+  help: "HTTP request latency",
+  labelNames: ["method", "route", "status"],
+  buckets: [0.1, 0.3, 0.5, 1, 2, 5]
 });
 
-// Count every HTTP request
+// Active users
+const activeUsersGauge = new client.Gauge({
+  name: "active_users",
+  help: "Currently logged in users"
+});
+
+// Total users
+const totalUsersGauge = new client.Gauge({
+  name: "total_users",
+  help: "Total registered users"
+});
+
+app.locals.activeUsersGauge = activeUsersGauge;
+
+// Middleware
 app.use((req, res, next) => {
+  const end = httpRequestDuration.startTimer();
   res.on("finish", () => {
     httpRequestCount.inc({
       method: req.method,
-      route: req.originalUrl,
+      route: req.path,
+      status: res.statusCode
+    });
+    end({
+      method: req.method,
+      route: req.path,
       status: res.statusCode
     });
   });
   next();
 });
 
-// -------------------------------------
+// Update total users every 10s
+setInterval(async () => {
+  const count = await User.countDocuments();
+  totalUsersGauge.set(count);
+}, 10000);
 
-app.use(cors({ origin: '*' }));
-app.use(express.json());
+// Routes
+app.use("/api/auth", require("./routes/auth"));
 
-// Pass custom metrics to routes
-app.locals.activeUsersGauge = activeUsersGauge;
-
-// Authentication routes
-app.use('/api/auth', require('./routes/auth'));
-
-// /metrics endpoint for Prometheus
+// Metrics endpoint
 app.get("/metrics", async (req, res) => {
-  try {
-    res.set("Content-Type", client.register.contentType);
-    res.end(await client.register.metrics());
-  } catch (ex) {
-    res.status(500).end(ex);
-  }
+  res.set("Content-Type", client.register.contentType);
+  res.end(await client.register.metrics());
 });
 
-// Start Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Backend running on port ${PORT}`);
+app.listen(5000, "0.0.0.0", () => {
+  console.log("Backend running on port 5000");
 });

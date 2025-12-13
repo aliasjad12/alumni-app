@@ -1,69 +1,48 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const express = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+const client = require("prom-client");
 const router = express.Router();
-require('dotenv').config();
 
-// --------------------------------------
-//  AUTH ROUTES WITH PROMETHEUS METRICS
-// --------------------------------------
+const loginCounter = new client.Counter({
+  name: "user_logins_total",
+  help: "Total successful logins"
+});
 
-router.post('/signup', async (req, res) => {
+const signupCounter = new client.Counter({
+  name: "user_signups_total",
+  help: "Total user signups"
+});
+
+router.post("/signup", async (req, res) => {
   const { name, email, password } = req.body;
-  try {
-    let user = await User.findOne({ email });
-    if (user) return res.status(400).json({ msg: "User already exists" });
+  const hash = await bcrypt.hash(password, 10);
+  await User.create({ name, email, password: hash });
 
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
+  signupCounter.inc();
 
-    user = new User({ name, email, password: hash });
-    await user.save();
-
-    // Signup does not increment active users
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token, user: { id: user._id, name, email } });
-  } catch (err) {
-    res.status(500).send("Server error");
-  }
+  const token = jwt.sign({ email }, process.env.JWT_SECRET);
+  res.json({ token });
 });
 
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+router.post("/login", async (req, res) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) return res.status(400).send("Invalid");
 
-  try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ msg: "Invalid credentials" });
+  const ok = await bcrypt.compare(req.body.password, user.password);
+  if (!ok) return res.status(400).send("Invalid");
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
+  loginCounter.inc();
+  req.app.locals.activeUsersGauge.inc();
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-    // Increase Prometheus active users metric
-    if (req.app.locals.activeUsersGauge) {
-      req.app.locals.activeUsersGauge.inc();
-    }
-
-    res.json({ token, user: { id: user._id, name: user.name, email } });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
+  const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET);
+  res.json({ token });
 });
 
-// LOGOUT ROUTE (Frontend must call this)
-router.post('/logout', (req, res) => {
-  try {
-    if (req.app.locals.activeUsersGauge) {
-      req.app.locals.activeUsersGauge.dec();
-    }
-
-    return res.json({ msg: "Logged out successfully" });
-  } catch (err) {
-    res.status(500).send("Server error");
-  }
+router.post("/logout", (req, res) => {
+  req.app.locals.activeUsersGauge.dec();
+  res.json({ msg: "Logged out" });
 });
 
 module.exports = router;
