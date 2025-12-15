@@ -18,7 +18,7 @@ services:
       - "3000:3000"
     depends_on:
       - backend
-    command: serve -s build -l 3000
+    command: serve -s build -l 3000 --single
 
   mongo:
     image: mongo
