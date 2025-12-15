@@ -12,4 +12,5 @@ RUN npm install -g serve
 EXPOSE 3000
 
 # Correct serve command for Node 20
-CMD ["serve", "-s", "build", "-l", "3000"]
+CMD ["serve", "-s", "build", "-l", "3000", "--single"]
+
