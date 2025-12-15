@@ -75,6 +75,8 @@ app.get("/metrics", async (req, res) => {
   res.set("Content-Type", client.register.contentType);
   res.end(await client.register.metrics());
 });
+app.use("/api/dashboard", require("./routes/dashboard"));
+
 
 app.listen(5000, "0.0.0.0", () => {
   console.log("Backend running on port 5000");

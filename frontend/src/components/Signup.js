@@ -10,7 +10,7 @@ function Signup() {
   const submit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://3.110.154.156:5000/api/auth/signup", form);
+      await axios.post("http://13.203.230.71:5000/api/auth/signup", form);
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed");
