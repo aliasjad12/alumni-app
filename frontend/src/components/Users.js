@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const BASE_URL = process.env.REACT_APP_API_URL;
+
 function Users() {
   const [users, setUsers] = useState([]);
 
   const loadUsers = async () => {
-    const res = await axios.get("http://13.203.230.71:5000/api/users");
+    const res = await axios.get(`${BASE_URL}/users`);
     setUsers(res.data);
   };
 
   const deleteUser = async (id) => {
-    await axios.delete(`http://13.203.230.71:5000/api/users/${id}`);
+    await axios.delete(`${BASE_URL}/users/${id}`);
     loadUsers();
   };
 

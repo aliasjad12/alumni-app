@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const BASE_URL = process.env.REACT_APP_API_URL;
+
 function Services() {
   const [services, setServices] = useState([]);
 
   useEffect(() => {
-    axios.get("http://13.203.230.71:5000/api/services")
+    axios.get(`${BASE_URL}/services`)
       .then(res => setServices(res.data));
   }, []);
 
