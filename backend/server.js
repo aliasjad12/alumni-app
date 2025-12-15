@@ -77,6 +77,8 @@ app.get("/metrics", async (req, res) => {
 });
 app.use("/api/dashboard", require("./routes/dashboard"));
 
+app.use("/api/users", require("./routes/users"));
+app.use("/api/services", require("./routes/services"));
 
 app.listen(5000, "0.0.0.0", () => {
   console.log("Backend running on port 5000");
