@@ -15,7 +15,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axios.get("http://13.203.230.71:5000/api/dashboard/stats");
+        const res = await axios.get("http://43.204.237.95:5000/api/dashboard/stats");
         setStats(res.data);
       } catch (err) {
         console.error("Stats error", err);
@@ -26,7 +26,7 @@ function Dashboard() {
   }, []);
 
   const handleLogout = async () => {
-    await axios.post("http://13.203.230.71:5000/api/auth/logout");
+    await axios.post("http://43.204.237.95:5000/api/auth/logout");
     localStorage.removeItem("token");
     navigate("/login");
   };
@@ -56,7 +56,7 @@ function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <ActionCard title="Manage Users" onClick={() => navigate("/users")} />
         <ActionCard title="View Services" onClick={() => navigate("/services")} />
-        <ActionCard title="System Logs" onClick={() => window.open("http://13.203.230.71:3001")} />
+        <ActionCard title="System Logs" onClick={() => window.open("http://43.204.237.95:3001")} />
       </div>
     </div>
   );
