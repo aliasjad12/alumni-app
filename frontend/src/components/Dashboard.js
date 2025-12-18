@@ -13,13 +13,13 @@ function Dashboard() {
 
   const submit = async (e) => {
     e.preventDefault();
-    await axios.post("http://43.204.237.95:5000/api/issues", form);
+    await axios.post("http://13.232.217.75:5000/api/issues", form);
     alert("Issue submitted successfully");
     setForm({ userName: "", medicalIssue: "", tenure: "" });
   };
 
   const logout = async () => {
-    await axios.post("http://43.204.237.95:5000/api/auth/logout");
+    await axios.post("http://13.232.217.75:5000/api/auth/logout");
     localStorage.removeItem("token");
     navigate("/login");
   };

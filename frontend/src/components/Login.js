@@ -10,7 +10,7 @@ function Login() {
   const submit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://43.204.237.95:5000/api/auth/login", form);
+      const res = await axios.post("http://13.232.217.75:5000/api/auth/login", form);
       localStorage.setItem("token", res.data.token);
       navigate("/dashboard");
     } catch (err) {

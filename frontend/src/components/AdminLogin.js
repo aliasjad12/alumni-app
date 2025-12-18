@@ -9,7 +9,7 @@ function AdminLogin() {
   const submit = async (e) => {
     e.preventDefault();
     const res = await axios.post(
-      "http://43.204.237.95:5000/api/auth/admin/login",
+      "http://13.232.217.75:5000/api/auth/admin/login",
       form
     );
     localStorage.setItem("adminToken", res.data.token);
