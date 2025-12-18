@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         EC2_USER = "ubuntu"
-        EC2_IP = "3.110.118.11"
+        EC2_IP = "43.204.237.95"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-id')
     }
     stages {

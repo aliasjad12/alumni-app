@@ -78,6 +78,7 @@ app.get("/metrics", async (req, res) => {
 app.use("/api/users", require("./routes/users"));
 app.use("/api/services", require("./routes/services"));
 app.use("/api/dashboard", require("./routes/dashboard"));
+app.use("/api/issues", require("./routes/issues"));
 
 
 
