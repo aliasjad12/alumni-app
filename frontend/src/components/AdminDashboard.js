@@ -8,7 +8,7 @@ function AdminDashboard() {
 
   useEffect(() => {
     axios
-      .get("http://13.232.217.75:5000/api/issues")
+      .get("http://43.204.114.62:5000/api/issues")
       .then((res) => setIssues(res.data));
   }, []);
 
